@@ -1,6 +1,8 @@
 import os
 import json
 import argparse
+
+import torch
 from tqdm import tqdm
 from PIL import Image
 
@@ -53,6 +55,22 @@ def generate_prompt_from_image(image_path, method="openai", model="gpt-4"):
         )
         return response['choices'][0]['message']['content'].strip()
 
+    elif method == "local":
+        from transformers import BlipProcessor, BlipForConditionalGeneration
+
+        device = "cuda" if torch.cuda.is_available() else "cpu"
+        processor = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-base")
+        model = BlipForConditionalGeneration.from_pretrained("Salesforce/blip-image-captioning-base").to(device)
+
+        raw_image = Image.open(image_path).convert("RGB")
+        inputs = processor(raw_image, return_tensors="pt").to(device)
+
+        with torch.no_grad():
+            out = model.generate(**inputs, max_new_tokens=100)
+            caption = processor.decode(out[0], skip_special_tokens=True)
+
+        # Optionally rephrase or add clinical tokens here
+        return f"Describe a skin lesion with: {caption}"
     else:
         raise ValueError(f"Unknown method: {method}")
 
