@@ -49,3 +49,98 @@ prompt2derm/
 │   └── io.py                      # I/O utilities: saving images, reading JSON, etc.
 
 └── README.md
+```
+
+# 📦 Setup
+
+## Requirements
+
+- Python 3.10+
+- CUDA-enabled GPU (for diffusion and classification)
+- PyTorch ≥ 2.0
+- Transformers, diffusers, OpenAI API (for LLMs)
+
+## Installation
+
+```bash
+git clone https://github.com/yourusername/prompt2derm.git
+cd prompt2derm
+pip install -r requirements.txt
+```
+
+Configure your OpenAI or HuggingFace keys in `.env` or `config.py`.
+
+---
+
+# 🧪 Usage
+
+## 1. Generate Prompts
+
+```bash
+python prompts/prompt_generator.py --input_dir ./data/real_images/ --output ./data/prompts.json
+```
+
+## 2. Fine-Tune Stable Diffusion
+
+```bash
+python diffusion/trainer.py --prompts ./data/prompts.json --images ./data/real_images/
+```
+
+## 3. Generate Synthetic Images
+
+```bash
+python diffusion/stable_diffusion_wrapper.py --prompt_file ./data/prompts.json --output_dir ./data/synthetic_images/
+```
+
+## 4. Train Classifier
+
+```bash
+python classifier/trainer.py --data ./data/mixed_dataset/
+```
+
+## 5. Evaluate
+
+```bash
+python classifier/evaluator.py --model_path ./checkpoints/model.pt
+```
+
+---
+
+# 📊 Evaluation Metrics
+
+- **Visual Fidelity**: FID, CLIP similarity  
+- **Prompt-Image Alignment**: CLIP score  
+- **Classification**: Accuracy, F1-score, ROC-AUC  
+- **Fairness**: Sensitivity by skin tone or lesion type  
+
+---
+
+# 📈 Roadmap
+
+- [x] Prompt generation from dermoscopic images  
+- [x] Fine-tuning diffusion models  
+- [x] Structured prompt templates  
+- [ ] Dermatologist-in-the-loop prompt validation  
+- [ ] Curriculum generation via classifier feedback  
+- [ ] Web interface for interactive prompt-to-image synthesis  
+
+---
+
+# 🤝 Citation
+
+If you use this work, please cite the upcoming paper:
+
+> *Prompt-Driven Diffusion for Dermatological Image Synthesis: A Natural Language Interface to Realistic and Diverse Melanoma Generation*  
+> Author Names, MICCAI 2025 (submitted)
+
+---
+
+# 📬 Contact
+
+For questions or collaboration:  
+**Rabih Chamas** – [you@example.com](mailto:)
+
+**Jules Collenne** [jules.collenne@gmail.com](mailto:jules.collenne@gmail.com)
+
+*Laboratoire Informatique et Systèmes*
+*Aix-Marseille University*
