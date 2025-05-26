@@ -1,0 +1,26 @@
+# Ignore IDE settings
+.idea/
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+
+# Virtual environments
+venv/
+env/
+
+# VS Code settings (optional)
+.vscode/
+
+# database files
+
+dermo_images/
+
+# Log files
+*.log
+
+# data
+data/
+
+# ignore
+ignore/
