@@ -20,7 +20,7 @@ dermo_images/
 *.log
 
 # data
-data/
+data/synthetic_images
 
 # ignore
 ignore/
