@@ -1,13 +1,14 @@
-import os
 import json
-from PIL import Image
-from tqdm import tqdm
+import os
 
 import torch
+from PIL import Image
+from diffusers import DDPMScheduler, UNet2DConditionModel, AutoencoderKL
 from torch.utils.data import Dataset, DataLoader
 from torchvision import transforms
-from diffusers import StableDiffusionPipeline, DDPMScheduler, UNet2DConditionModel, AutoencoderKL
+from tqdm import tqdm
 from transformers import CLIPTokenizer, CLIPTextModel
+import argparse
 
 from utils.io import list_image_files
 
@@ -120,3 +121,29 @@ def train(
         unet.save_pretrained(os.path.join(output_dir, f"unet_epoch{epoch+1}"))
 
     print("Training complete. Final model saved.")
+
+
+def main():
+    parser = argparse.ArgumentParser(description="Fine-tune Stable Diffusion UNet on prompt-image pairs")
+    parser.add_argument("--image_dir", type=str, required=True, help="Directory containing real images")
+    parser.add_argument("--prompt_file", type=str, required=True, help="JSON file with image_id -> prompt mapping")
+    parser.add_argument("--output_dir", type=str, default="./checkpoints/diffusion", help="Directory to save model checkpoints")
+    parser.add_argument("--batch_size", type=int, default=4, help="Batch size for training")
+    parser.add_argument("--num_epochs", type=int, default=10, help="Number of epochs")
+    parser.add_argument("--lr", type=float, default=1e-5, help="Learning rate")
+    parser.add_argument("--device", type=str, default="cuda", help="Device: cuda or cpu")
+
+    args = parser.parse_args()
+
+    train(
+        image_dir=args.image_dir,
+        prompt_file=args.prompt_file,
+        output_dir=args.output_dir,
+        batch_size=args.batch_size,
+        num_epochs=args.num_epochs,
+        lr=args.lr,
+        device=args.device
+    )
+
+if __name__ == "__main__":
+    main()
