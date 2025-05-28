@@ -4,7 +4,8 @@ from tqdm import tqdm
 from generate_prompts import generate_dermatology_multi_turn
 
 input_dir = "data/valid_split"
-output_file = "lesion_features_1.jsonl"
+output_dir = os.path.join("data", "prompts")
+output_file = os.path.join(output_dir, "lesion_features_1.jsonl")
 
 with open(output_file, "w", encoding="utf-8") as out_f:
     for class_folder in os.listdir(input_dir):
