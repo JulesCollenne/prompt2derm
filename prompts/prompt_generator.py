@@ -107,7 +107,7 @@ def generate_prompt_dataset(image_dir, output_path, method="template", limit=Non
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Generate prompts from dermoscopic images")
     parser.add_argument("--input_dir", required=True, help="Directory of dermoscopic images")
-    parser.add_argument("--output", required=True, help="Output JSON file path")
+    parser.add_argument("--output", default="./data/prompts/prompts.json", help="Output JSON file path")
     parser.add_argument("--method", default="template", choices=["template", "openai"], help="Prompt generation method")
     parser.add_argument("--limit", type=int, default=None, help="Max number of images to process")
 

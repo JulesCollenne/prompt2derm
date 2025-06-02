@@ -29,7 +29,10 @@ class PromptImageDataset(Dataset):
     def __init__(self, image_dir, prompt_file, tokenizer, resolution=512):
         self.image_paths = list_image_files(image_dir)
         with open(prompt_file, 'r') as f:
-            self.prompts = json.load(f)
+            self.prompts = {}
+            for line in f:
+                entry = json.loads(line)
+                self.prompts[entry["image"]] = entry["description"]
 
         self.tokenizer = tokenizer
         self.transform = transforms.Compose([
@@ -72,6 +75,7 @@ def train(
     os.makedirs(output_dir, exist_ok=True)
 
     # Load base model components
+    print("Load base model components")
     tokenizer = CLIPTokenizer.from_pretrained(model_name, subfolder="tokenizer")
     text_encoder = CLIPTextModel.from_pretrained(model_name, subfolder="text_encoder").to(device)
     vae = AutoencoderKL.from_pretrained(model_name, subfolder="vae").to(device)
@@ -86,8 +90,10 @@ def train(
     optimizer = torch.optim.AdamW(unet.parameters(), lr=lr)
 
     # Training
+    print("Training...")
     unet.train()
     for epoch in range(num_epochs):
+        print(f"Epoch {epoch}.")
         epoch_loss = 0.0
         for batch in tqdm(dataloader, desc=f"Epoch {epoch+1}/{num_epochs}"):
             pixel_values = batch["pixel_values"].to(device)
@@ -128,7 +134,7 @@ def main():
     parser.add_argument("--image_dir", type=str, required=True, help="Directory containing real images")
     parser.add_argument("--prompt_file", type=str, required=True, help="JSON file with image_id -> prompt mapping")
     parser.add_argument("--output_dir", type=str, default="./checkpoints/diffusion", help="Directory to save model checkpoints")
-    parser.add_argument("--batch_size", type=int, default=4, help="Batch size for training")
+    parser.add_argument("--batch_size", type=int, default=2, help="Batch size for training")
     parser.add_argument("--num_epochs", type=int, default=10, help="Number of epochs")
     parser.add_argument("--lr", type=float, default=1e-5, help="Learning rate")
     parser.add_argument("--device", type=str, default="cuda", help="Device: cuda or cpu")
