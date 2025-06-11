@@ -26,7 +26,7 @@ python diffusion/trainer.py \
 # Dataset for Prompt-Image Pairs
 # -------------------------------
 class PromptImageDataset(Dataset):
-    def __init__(self, image_dir, prompt_file, tokenizer, resolution=512):
+    def __init__(self, image_dir, prompt_file, tokenizer, resolution):
         self.image_paths = list_image_files(image_dir)
         with open(prompt_file, 'r') as f:
             self.prompts = {}
@@ -70,7 +70,8 @@ def train(
     batch_size=4,
     num_epochs=10,
     lr=1e-5,
-    device="cuda"
+    device="cuda",
+    resolution=512
 ):
     os.makedirs(output_dir, exist_ok=True)
 
@@ -83,7 +84,7 @@ def train(
     noise_scheduler = DDPMScheduler.from_pretrained(model_name, subfolder="scheduler")
 
     # Dataset
-    dataset = PromptImageDataset(image_dir, prompt_file, tokenizer)
+    dataset = PromptImageDataset(image_dir, prompt_file, tokenizer, resolution=resolution)
     dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True, num_workers=4)
 
     # Optimizer
@@ -93,7 +94,7 @@ def train(
     print("Training...")
     unet.train()
     for epoch in range(num_epochs):
-        print(f"Epoch {epoch}.")
+        print(f"Epoch {epoch}")
         epoch_loss = 0.0
         for batch in tqdm(dataloader, desc=f"Epoch {epoch+1}/{num_epochs}"):
             pixel_values = batch["pixel_values"].to(device)
@@ -134,12 +135,14 @@ def main():
     parser.add_argument("--image_dir", type=str, required=True, help="Directory containing real images")
     parser.add_argument("--prompt_file", type=str, required=True, help="JSON file with image_id -> prompt mapping")
     parser.add_argument("--output_dir", type=str, default="./checkpoints/diffusion", help="Directory to save model checkpoints")
-    parser.add_argument("--batch_size", type=int, default=2, help="Batch size for training")
+    parser.add_argument("--batch_size", type=int, default=8, help="Batch size for training")
     parser.add_argument("--num_epochs", type=int, default=10, help="Number of epochs")
     parser.add_argument("--lr", type=float, default=1e-5, help="Learning rate")
     parser.add_argument("--device", type=str, default="cuda", help="Device: cuda or cpu")
+    parser.add_argument("--resolution", type=int, default=512, help="Image resolution")
 
     args = parser.parse_args()
+    print(args)
 
     train(
         image_dir=args.image_dir,
@@ -148,7 +151,8 @@ def main():
         batch_size=args.batch_size,
         num_epochs=args.num_epochs,
         lr=args.lr,
-        device=args.device
+        device=args.device,
+        resolution=args.resolution
     )
 
 if __name__ == "__main__":
