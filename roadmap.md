@@ -8,6 +8,7 @@
   - [x] Generate prompts using GPT-4 vision API
   - [ ] Implement local prompt generation using BLIP or LLaVA
   - [x] Normalize prompt structure into JSON templates
+  - [ ] Train SVM or XGBoost on generated prompts
   - [ ] Add dermatologist review layer (optional filtering or scoring)
 
 - [ ] **Diffusion Pipeline**
