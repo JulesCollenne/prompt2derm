@@ -116,7 +116,6 @@ def generate_dermatology_description(image_path):
         "usage": usage
     }
 
-# Example usage
 if __name__ == '__main__':
     input_dir = "data/valid_split"
     output_dir = os.path.join("data", "prompts")
