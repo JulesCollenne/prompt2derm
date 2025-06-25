@@ -4,14 +4,12 @@ import openai
 import json
 from PIL import Image
 import io
-import matplotlib.pyplot as plt
 import re
 
+from tqdm import tqdm
 
 
-
-
-def generate_dermatology_multi_turn(image_path):
+def generate_dermatology_description(image_path):
     """
     Generates a multi-step dermatology analysis and prompt generation from an image using OpenAI GPT-4o.
     Focused on lesion description, artifacts, and prompt generation (no diagnosis).
@@ -31,25 +29,7 @@ def generate_dermatology_multi_turn(image_path):
     client = openai.OpenAI(api_key=api_key)
 
     # Load the image from file
-    # Load the image from file
     image = Image.open(image_path)
-
-    # # 🪄 CROP: (left, upper, right, lower)
-    # # Example: crop center square
-    # width, height = image.size
-    # min_dim = min(width, height)
-    # left = (width - min_dim) // 2
-    # top = (height - min_dim) // 2
-    # right = left + min_dim
-    # bottom = top + min_dim
-    # image = image.crop((left, top, right, bottom))
-
-    # image = image.resize((1024, 1024))
-    # 🖼️ Plot the image
-    # plt.imshow(image)
-    # plt.axis('off')  # Hide axes
-    # plt.title("Processed Image")
-    # plt.show()
 
     # 🔁 Save to bytes buffer
     buffered = io.BytesIO()
@@ -58,7 +38,6 @@ def generate_dermatology_multi_turn(image_path):
 
     # 🔐 Encode to base64
     image_base64 = base64.b64encode(image_bytes).decode()
-
 
     messages = [
         {
@@ -139,9 +118,29 @@ def generate_dermatology_multi_turn(image_path):
 
 # Example usage
 if __name__ == '__main__':
-    # img_path = "C:/Users/admin/PycharmProjects/Prompt2Lesion/dermo_images/Test/mel/ISIC_0034243.JPG"
-    path = r"data\valid_split\mel\ISIC_0961235.jpg"
-    result = generate_dermatology_multi_turn(path)
-    print(result["feature_vector"])
-    print(result["raw_reply"])
-    print(result["usage"])
+    input_dir = "data/valid_split"
+    output_dir = os.path.join("data", "prompts")
+    output_file = os.path.join(output_dir, "lesion_features_1.jsonl")
+
+    with open(output_file, "w", encoding="utf-8") as out_f:
+        for class_folder in os.listdir(input_dir):
+            class_path = os.path.join(input_dir, class_folder)
+            if not os.path.isdir(class_path):
+                continue
+
+            for filename in tqdm(os.listdir(class_path), desc=f"Processing {class_folder}"):
+                if not filename.lower().endswith((".jpg", ".jpeg", ".png")):
+                    continue
+
+                image_path = os.path.join(class_path, filename)
+                try:
+                    result = generate_dermatology_description(image_path)
+                    entry = {
+                        "image": os.path.join(class_folder, filename),
+                        "class": class_folder,
+                        "description": result["feature_vector"].get("description", ""),
+                        "features": result["feature_vector"].get("features", {})
+                    }
+                    out_f.write(json.dumps(entry) + "\n")
+                except Exception as e:
+                    print(f"Failed on {filename}: {e}")
