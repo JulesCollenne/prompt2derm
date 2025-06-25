@@ -1,5 +1,4 @@
 import torch
-import numpy as np
 from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score, roc_auc_score, confusion_matrix
 
 try:
@@ -37,7 +36,7 @@ def compute_metrics(preds, labels, average="binary"):
     return metrics
 
 
-def compute_clip_similarity(image: Image.Image, prompt: str, model=None, preprocess=None, device="cuda"):
+def compute_clip_similarity(image, prompt: str, model=None, preprocess=None, device="cuda"):
     """
     Compute CLIP similarity between an image and a prompt.
 
