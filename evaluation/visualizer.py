@@ -9,9 +9,9 @@ Example usage:
 from evaluation.visualizer import visualize_grid
 from utils.io import load_json
 
-prompts = load_json("./data/prompts.json")
+descriptions = load_json("./data/descriptions.json")
 visualize_grid(
-    prompt_dict=prompts,
+    prompt_dict=descriptions,
     real_dir="./data/real_images",
     synth_dir="./data/synthetic_images",
     output_dir="./visualizations",

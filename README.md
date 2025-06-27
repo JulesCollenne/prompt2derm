@@ -77,19 +77,19 @@ Configure your OpenAI or HuggingFace keys in `.env` or `config.py`.
 ## 1. Generate Prompts
 
 ```bash
-python prompts/generate_descriptions.py --input_dir ./data/real_images/ --output ./data/prompts.json
+python descriptions/generate_descriptions.py --input_dir ./data/real_images/ --output ./data/descriptions.json
 ```
 
 ## 2. Fine-Tune Stable Diffusion
 
 ```bash
-python diffusion/trainer.py --prompts ./data/prompts.json --images ./data/real_images/
+python diffusion/trainer.py --descriptions ./data/descriptions.json --images ./data/real_images/
 ```
 
 ## 3. Generate Synthetic Images
 
 ```bash
-python diffusion/stable_diffusion_wrapper.py --prompt_file ./data/prompts.json --output_dir ./data/synthetic_images/
+python diffusion/stable_diffusion_wrapper.py --prompt_file ./data/descriptions.json --output_dir ./data/synthetic_images/
 ```
 
 ## 4. Train Classifier

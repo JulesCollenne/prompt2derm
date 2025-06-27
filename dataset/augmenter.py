@@ -8,7 +8,7 @@ from utils.io import save_image
 
 def generate_synthetic_dataset(prompt_file, output_dir, diffusion_model=None, overwrite=False):
     """
-    Generate synthetic images from prompts using a diffusion model.
+    Generate synthetic images from descriptions using a diffusion model.
     Args:
         prompt_file (str): Path to a JSON file with {id: prompt} entries.
         output_dir (str): Directory to save generated images.

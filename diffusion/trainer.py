@@ -17,7 +17,7 @@ Usage example:
 
 python diffusion/trainer.py \
     --image_dir ./data/real_images \
-    --prompt_file ./data/prompts.json \
+    --prompt_file ./data/descriptions.json \
     --output_dir ./checkpoints/diffusion \
     --batch_size 4 --num_epochs 10
 """

@@ -62,7 +62,7 @@ def generate_image_from_prompt(prompt, model=None, device="cuda", guidance_scale
 
 def batch_generate(prompts, output_dir, model=None, device="cuda", overwrite=False):
     """
-    Generate a batch of images from a list of prompts and save them to disk.
+    Generate a batch of images from a list of descriptions and save them to disk.
 
     Args:
         prompts (dict): Dictionary {id: prompt}.
