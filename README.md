@@ -77,7 +77,7 @@ Configure your OpenAI or HuggingFace keys in `.env` or `config.py`.
 ## 1. Generate Prompts
 
 ```bash
-python prompts/prompt_generator.py --input_dir ./data/real_images/ --output ./data/prompts.json
+python prompts/generate_descriptions.py --input_dir ./data/real_images/ --output ./data/prompts.json
 ```
 
 ## 2. Fine-Tune Stable Diffusion

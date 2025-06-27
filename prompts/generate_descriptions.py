@@ -8,11 +8,49 @@ import re
 
 from tqdm import tqdm
 
+import os
+import argparse
+
+
+def main():
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--input_dir', type=str, required=True)
+    parser.add_argument('--output', type=str, required=True)
+    args = parser.parse_args()
+
+    input_dir = args.input_dir
+    output_file = args.output
+
+    with open(output_file, "w", encoding="utf-8") as out_f:
+        for class_folder in os.listdir(input_dir):
+            class_path = os.path.join(input_dir, class_folder)
+            if not os.path.isdir(class_path):
+                continue
+
+            for filename in tqdm(os.listdir(class_path), desc=f"Processing {class_folder}"):
+                if not filename.lower().endswith((".jpg", ".jpeg", ".png")):
+                    continue
+
+                image_path = os.path.join(class_path, filename)
+                try:
+                    result = generate_dermatology_description(image_path)
+                    entry = {
+                        "image": os.path.join(class_folder, filename),
+                        "class": class_folder,
+                        "description": result["feature_vector"].get("description", ""),
+                        "features": result["feature_vector"].get("features", {})
+                    }
+                    out_f.write(json.dumps(entry) + "\n")
+                except Exception as e:
+                    print(f"Failed on {filename}: {e}")
+
+
 
 def generate_dermatology_description(image_path):
     """
-    Generates a multi-step dermatology analysis and prompt generation from an image using OpenAI GPT-4o.
-    Focused on lesion description, artifacts, and prompt generation (no diagnosis).
+    Generates a multi-step dermatology analysis from an image using OpenAI GPT-4o.
+    Focused on lesion description, artifacts (no diagnosis).
 
     Args:
         image_path (str): Path to the skin lesion image.
@@ -117,29 +155,4 @@ def generate_dermatology_description(image_path):
     }
 
 if __name__ == '__main__':
-    input_dir = "data/valid_split"
-    output_dir = os.path.join("data", "prompts")
-    output_file = os.path.join(output_dir, "lesion_features_1.jsonl")
-
-    with open(output_file, "w", encoding="utf-8") as out_f:
-        for class_folder in os.listdir(input_dir):
-            class_path = os.path.join(input_dir, class_folder)
-            if not os.path.isdir(class_path):
-                continue
-
-            for filename in tqdm(os.listdir(class_path), desc=f"Processing {class_folder}"):
-                if not filename.lower().endswith((".jpg", ".jpeg", ".png")):
-                    continue
-
-                image_path = os.path.join(class_path, filename)
-                try:
-                    result = generate_dermatology_description(image_path)
-                    entry = {
-                        "image": os.path.join(class_folder, filename),
-                        "class": class_folder,
-                        "description": result["feature_vector"].get("description", ""),
-                        "features": result["feature_vector"].get("features", {})
-                    }
-                    out_f.write(json.dumps(entry) + "\n")
-                except Exception as e:
-                    print(f"Failed on {filename}: {e}")
+    main()
