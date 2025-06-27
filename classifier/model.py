@@ -1,8 +1,8 @@
-import torch
 import torch.nn as nn
 import torchvision.models as models
 
-from transformers import ViTForImageClassification, ViTConfig
+from transformers import ViTForImageClassification
+
 
 # -------------------------------
 # CNN-based Classifier (ResNet50)
