@@ -1,3 +1,5 @@
+from os.path import join
+
 import pandas as pd
 import json
 import seaborn as sns
@@ -6,7 +8,7 @@ import matplotlib.pyplot as plt
 
 if __name__ == "__main__":
     # Load JSONL into a list of dictionaries
-    with open("prompts\lesion_features_1.jsonl", "r", encoding="utf-8") as f:
+    with open(join("prompts","lesion_features_1.jsonl"), "r", encoding="utf-8") as f:
         data = [json.loads(line) for line in f]
 
     # Flatten into a DataFrame
