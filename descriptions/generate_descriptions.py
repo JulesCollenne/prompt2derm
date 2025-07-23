@@ -35,7 +35,7 @@ def main():
                 try:
                     result = generate_dermatology_description(image_path)
                     entry = {
-                        "image": os.path.join(class_folder, filename),
+                        "image": filename,
                         "class": class_folder,
                         "description": result["feature_vector"].get("description", ""),
                         "features": result["feature_vector"].get("features", {})

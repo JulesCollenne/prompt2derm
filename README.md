@@ -131,7 +131,8 @@ python classifier/evaluator.py --model_path ./checkpoints/model.pt
 If you use this work, please cite the upcoming paper:
 
 > *Prompt-Driven Diffusion for Dermatological Image Synthesis: A Natural Language Interface to Realistic and Diverse Melanoma Generation*  
-> Author Names, MICCAI 2025 (submitted)
+
+[//]: # (> Author Names, MICCAI 2025 &#40;submitted&#41;)
 
 ---
 

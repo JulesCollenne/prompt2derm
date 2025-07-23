@@ -22,6 +22,7 @@ python diffusion/trainer.py \
     --batch_size 4 --num_epochs 10
 """
 
+
 # -------------------------------
 # Dataset for Prompt-Image Pairs
 # -------------------------------
@@ -59,19 +60,20 @@ class PromptImageDataset(Dataset):
             "attention_mask": inputs["attention_mask"].squeeze(0)
         }
 
+
 # -------------------------------
 # Training Loop
 # -------------------------------
 def train(
-    image_dir,
-    prompt_file,
-    output_dir="./checkpoints/diffusion",
-    model_name="CompVis/stable-diffusion-v1-4",
-    batch_size=4,
-    num_epochs=10,
-    lr=1e-5,
-    device="cuda",
-    resolution=512
+        image_dir,
+        prompt_file,
+        output_dir="./checkpoints/diffusion",
+        model_name="CompVis/stable-diffusion-v1-4",
+        batch_size=4,
+        num_epochs=10,
+        lr=1e-5,
+        device="cuda",
+        resolution=512
 ):
     os.makedirs(output_dir, exist_ok=True)
 
@@ -96,7 +98,7 @@ def train(
     for epoch in range(num_epochs):
         print(f"Epoch {epoch}")
         epoch_loss = 0.0
-        for batch in tqdm(dataloader, desc=f"Epoch {epoch+1}/{num_epochs}"):
+        for batch in tqdm(dataloader, desc=f"Epoch {epoch + 1}/{num_epochs}"):
             pixel_values = batch["pixel_values"].to(device)
             input_ids = batch["input_ids"].to(device)
             attention_mask = batch["attention_mask"].to(device)
@@ -122,10 +124,10 @@ def train(
             epoch_loss += loss.item()
 
         avg_loss = epoch_loss / len(dataloader)
-        print(f"[Epoch {epoch+1}] Loss: {avg_loss:.4f}")
+        print(f"[Epoch {epoch + 1}] Loss: {avg_loss:.4f}")
 
         # Save checkpoint
-        unet.save_pretrained(os.path.join(output_dir, f"unet_epoch{epoch+1}"))
+        unet.save_pretrained(os.path.join(output_dir, f"unet_epoch{epoch + 1}"))
 
     print("Training complete. Final model saved.")
 
@@ -134,7 +136,8 @@ def main():
     parser = argparse.ArgumentParser(description="Fine-tune Stable Diffusion UNet on prompt-image pairs")
     parser.add_argument("--image_dir", type=str, required=True, help="Directory containing real images")
     parser.add_argument("--prompt_file", type=str, required=True, help="JSON file with image_id -> prompt mapping")
-    parser.add_argument("--output_dir", type=str, default="./checkpoints/diffusion", help="Directory to save model checkpoints")
+    parser.add_argument("--output_dir", type=str, default="./checkpoints/diffusion",
+                        help="Directory to save model checkpoints")
     parser.add_argument("--batch_size", type=int, default=8, help="Batch size for training")
     parser.add_argument("--num_epochs", type=int, default=10, help="Number of epochs")
     parser.add_argument("--lr", type=float, default=1e-5, help="Learning rate")
@@ -154,6 +157,7 @@ def main():
         device=args.device,
         resolution=args.resolution
     )
+
 
 if __name__ == "__main__":
     main()
